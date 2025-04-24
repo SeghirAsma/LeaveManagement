@@ -1,0 +1,65 @@
+name: dockercompose18234121369713897931
+services:
+  leavemanagementsystem:
+    build:
+      context: C:\Users\MSI\Desktop\LeaveManagementSystem\Leave Management System
+      dockerfile: Leave Management System/Dockerfile
+    depends_on:
+      sqlite-db:
+        condition: service_started
+        required: true
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: https://+:443;http://+:80
+    image: leavemanagementsystem
+    networks:
+      leave_network: null
+    ports:
+      - mode: ingress
+        target: 80
+        published: "32769"
+        protocol: tcp
+      - mode: ingress
+        target: 80
+        protocol: tcp
+      - mode: ingress
+        target: 443
+        protocol: tcp
+    volumes:
+      - type: bind
+        source: C:\Users\MSI\Desktop\LeaveManagementSystem\Leave Management System\LeaveManagementSystem
+        target: /app
+        bind:
+          create_host_path: true
+      - type: bind
+        source: C:\Users\MSI\Desktop\LeaveManagementSystem\Leave Management System\data
+        target: /data
+        bind:
+          create_host_path: true
+      - type: bind
+        source: C:\Users\MSI\AppData\Roaming/Microsoft/UserSecrets
+        target: /root/.microsoft/usersecrets
+        read_only: true
+        bind:
+          create_host_path: true
+      - type: bind
+        source: C:\Users\MSI\AppData\Roaming/ASP.NET/Https
+        target: /root/.aspnet/https
+        read_only: true
+        bind:
+          create_host_path: true
+  sqlite-db:
+    container_name: sqlite_container
+    image: nouchka/sqlite3
+    networks:
+      leave_network: null
+    volumes:
+      - type: bind
+        source: C:\Users\MSI\Desktop\LeaveManagementSystem\Leave Management System\data\db
+        target: /db
+        bind:
+          create_host_path: true
+networks:
+  leave_network:
+    name: dockercompose18234121369713897931_leave_network
+    driver: bridge

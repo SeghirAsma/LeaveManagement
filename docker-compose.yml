@@ -1,0 +1,29 @@
+version: '3.4'
+
+services:
+  leavemanagementsystem:
+    image: ${DOCKER_REGISTRY-}leavemanagementsystem
+    build:
+      context: .
+      dockerfile: Leave Management System/Dockerfile
+    ports:
+      - "32769:80" 
+    volumes:
+      - ./LeaveManagementSystem:/app  
+      - ./data:/data   
+    networks:
+      - leave_network
+    depends_on:
+      - sqlite-db
+
+  sqlite-db:
+    image: nouchka/sqlite3  
+    container_name: sqlite_container
+    volumes:
+      - ./data/db:/db     
+    networks:
+      - leave_network
+
+networks:
+  leave_network:
+    driver: bridge
